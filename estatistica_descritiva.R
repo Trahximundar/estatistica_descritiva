@@ -26,9 +26,10 @@ setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/
 
 #Dados
 dados <- read.csv2("Dados Metereologicos.csv") %>% 
-  janitor::clean_names()
+         janitor::clean_names() %>% 
+         select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+         as_tibble()
 
-glimpse(dados)
 
 #Gráficos Individuais
 #Freq. Absoluta
@@ -118,7 +119,19 @@ dados.cat <- cut(dados$precipitacao_mm, breaks = c(0,57,114,180),
 summarytools::freq(dados.cat,report.nas = FALSE,
                    style = "rmarkdown")
 
-##### XXXXXX  ###############################################################################################################################################################################
+##### Média  ###############################################################################################################################################################################
+
+prec_media <- mean(dados$precipitacao_mm)
+
+
+
+
+prec_media <- read.csv2("Dados Metereologicos.csv") %>% 
+              janitor::clean_names() %>% 
+              select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+              as_tibble() %>% 
+              dplyr::group_by(nome) %>%                 #Agrupou os dados de acordo com o nome da estaão;
+              summarise(prec_media = mean(precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
 
 
@@ -126,37 +139,22 @@ summarytools::freq(dados.cat,report.nas = FALSE,
 
 
 
-R.version.string
-
-usethis::git_default_branch_configure('principal')
-gitcreds::gitcreds_set()
-
-usethis::create_github_token()
-
-usethis::create_github_token()
-
-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
-
-gitcreds::gitcreds_set()
-
-gitcreds::gitcreds_set()
-1
 
 
-usethis::edit_r_environ()
 
-usethis::git_sitrep()
 
-usethis::use_git()
-3
 
-teste
-teste
-teste
-teste
-teste
-teste
-teste
+
+
+
+
+
+
+
+
+
+
+
 
 
 
