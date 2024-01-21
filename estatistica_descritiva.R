@@ -121,11 +121,6 @@ summarytools::freq(dados.cat,report.nas = FALSE,
 
 ##### Média  ###############################################################################################################################################################################
 
-prec_media <- mean(dados$precipitacao_mm)
-
-
-
-
 prec_media <- read.csv2("Dados Metereologicos.csv") %>% 
               janitor::clean_names() %>% 
               select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
@@ -134,8 +129,14 @@ prec_media <- read.csv2("Dados Metereologicos.csv") %>%
               summarise(prec_media = mean(precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
 
+##### Mediana  ###############################################################################################################################################################################
 
-
+prec_mediana <- read.csv2("Dados Metereologicos.csv") %>% 
+                janitor::clean_names() %>% 
+                select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                as_tibble() %>% 
+                dplyr::group_by(nome) %>%                 #Agrupou os dados de acordo com o nome da estaão;
+                summarise(prec_mediana = median(prec_mediana$precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
 
 
