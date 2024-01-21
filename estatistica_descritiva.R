@@ -26,11 +26,10 @@ setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/
 
 #Dados
 dados <- read.csv2("Dados Metereologicos.csv") %>% 
-         janitor::clean_names() %>% 
-         select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
-         as_tibble()
-
-
+         janitor::clean_names() %>%
+         as_tibble() %>% 
+         select( -c(velocidade_vento, umidade_ar, temp_media_c))
+        
 #Gráficos Individuais
 #Freq. Absoluta
 ggplot(dados,aes(x=precipitacao_mm))+
@@ -123,8 +122,8 @@ summarytools::freq(dados.cat,report.nas = FALSE,
 
 prec_media <- read.csv2("Dados Metereologicos.csv") %>% 
               janitor::clean_names() %>% 
+              as_tibble() %>%
               select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
-              as_tibble() %>% 
               dplyr::group_by(nome) %>%                 #Agrupou os dados de acordo com o nome da estaão;
               summarise(prec_media = mean(precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
@@ -133,10 +132,55 @@ prec_media <- read.csv2("Dados Metereologicos.csv") %>%
 
 prec_mediana <- read.csv2("Dados Metereologicos.csv") %>% 
                 janitor::clean_names() %>% 
+                as_tibble() %>%
                 select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
-                as_tibble() %>% 
                 dplyr::group_by(nome) %>%                 #Agrupou os dados de acordo com o nome da estaão;
                 summarise(prec_mediana = median(prec_mediana$precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
+
+##### Medida de dispersão ###############################################################################################################################################################################
+##### Variãncia  ###############################################################################################################################################################################
+
+prec_varianca <-  read.csv2("Dados Metereologicos.csv") %>% 
+                  janitor::clean_names() %>% 
+                  as_tibble() %>% 
+                  select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                  dplyr::group_by(nome) %>%                                       #Agrupou os dados de acordo com o nome da estaão;
+                  summarise(prec_variacia = var(precipitacao_mm, na.rm = T))
+                                      
+##### Desvio Padrão ###############################################################################################################################################################################
+
+prec_desvio <-  read.csv2("Dados Metereologicos.csv") %>% 
+                janitor::clean_names() %>% 
+                as_tibble() %>% 
+                select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                dplyr::group_by(nome) %>%                                       #Agrupou os dados de acordo com o nome da estaão;
+                summarise(prec_desvio = sd(precipitacao_mm, na.rm = T))         #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
+
+
+##### Rascunhoo ###############################################################################################################################################################################
+notas <- c(9,3,7,1,4,4,4,7,7,9,0,NA)
+
+#Amostra
+var_amostra <- var(dados$precipitacao_mm, na.rm = T)
+
+#População
+n <- length(notas)
+var_pop <- var(notas, na.rm = T)*(n-1)/n
+
+var_pop <- function(x){
+        #Bloco de comandos da função 
+        n <- length(x)
+        var.pop <- var(x, na.rm = T)*(n-1)/n
+        return(var.pop)
+        }
+var_pop(notas)
+
+
+#Desvio Padrão Amostra
+sd(notas,na.rm = T)
+
+
+sqrt(var_pop(notas))
 
 
 
