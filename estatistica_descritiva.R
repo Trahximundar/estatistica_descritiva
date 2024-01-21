@@ -156,9 +156,24 @@ prec_desvio <-  read.csv2("Dados Metereologicos.csv") %>%
                 dplyr::group_by(nome) %>%                                       #Agrupou os dados de acordo com o nome da estaão;
                 summarise(prec_desvio = sd(precipitacao_mm, na.rm = T))         #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
+##### Quantil ###############################################################################################################################################################################
 
-##### Rascunhoo ###############################################################################################################################################################################
-notas <- c(9,3,7,1,4,4,4,7,7,9,0,NA)
+prec_quantil <- read.csv2("Dados Metereologicos.csv") %>% 
+                janitor::clean_names() %>% 
+                as_tibble() %>% 
+                select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                dplyr::group_by(nome) %>%                                                        #Agrupou os dados de acordo com o nome da estaão;
+                summarise(prec_per_25 = quantile(precipitacao_mm,probs = .25, na.rm = T),        #Percentil 25 ou Primeiro Quartil
+                          prec_per_50 = quantile(precipitacao_mm,probs = .50, na.rm = T),        #Percentil 50 ou Segundo Quartil
+                          prec_per_75 = quantile(precipitacao_mm,probs = .75, na.rm = T))        #Percentil 75 ou Terceiro Quartil
+
+##### Rascunho ###############################################################################################################################################################################
+
+notas <- c(6,8,9.78,4,0,6,8,NA)
+
+quantile(notas,probs = .25, na.rm = T) #Percentil 25 ou Primeiro Quartil
+quantile(notas,probs = .50, na.rm = T) #Percentil 50 ou Segundo Quartil
+quantile(notas,probs = .75, na.rm = T) #Percentil 75 ou Terceiro Quartil
 
 #Amostra
 var_amostra <- var(dados$precipitacao_mm, na.rm = T)
