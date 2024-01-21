@@ -1,5 +1,7 @@
 rm(list = ls())
 
+##### Biblbiotecas #################################################################################################################################################################################
+
 install.packages("patchwork")
 install.packages("summarytools")
 install.packages("credentials")
@@ -18,19 +20,20 @@ library(tibble)
 library(readxl)
 library(dplyr)
 
-####################################################################################################################################################################################
+##### Diretório de Trabalho #################################################################################################################################################################################
 
 setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/")
 
-##### Distribuião de Frequência ###############################################################################################################################################################################
+##### Leitura e tratamento dos Dados ###############################################################################################################################################################################
 
 #Dados
 dados <- read.csv2("Dados Metereologicos.csv") %>% 
          janitor::clean_names() %>%
          as_tibble() %>% 
          select( -c(velocidade_vento, umidade_ar, temp_media_c))
-        
-#Gráficos Individuais
+
+##### Gráficos Individuais #################################################################################################################################################################################        
+
 #Freq. Absoluta
 ggplot(dados,aes(x=precipitacao_mm))+
   geom_histogram(bins = 12,
@@ -63,7 +66,8 @@ ggplot(dados,aes(x=precipitacao_mm, y = cumsum((..count../sum(..count..))*100)))
   labs(x="Precipitação Média (mm)",y = "Frequência Relativa Acumulada(%)",title = "Histograma")+
   theme_minimal()
 
-#Gráficos Juntos
+##### Gráficos Agrupados #################################################################################################################################################################################
+
 #Freq. Absoluta
 g1 <- ggplot(dados,aes(x=precipitacao_mm))+
   geom_histogram(bins = 12,
@@ -137,15 +141,15 @@ prec_mediana <- read.csv2("Dados Metereologicos.csv") %>%
                 dplyr::group_by(nome) %>%                 #Agrupou os dados de acordo com o nome da estaão;
                 summarise(prec_mediana = median(prec_mediana$precipitacao_mm, na.rm = T))     #A funão "summarise()" quando aplicada em dados agrupados, retornara a média também agrupada.
 
-##### Medida de dispersão ###############################################################################################################################################################################
+##### Medida de Dispersão ###############################################################################################################################################################################
 ##### Variãncia  ###############################################################################################################################################################################
 
-prec_varianca <-  read.csv2("Dados Metereologicos.csv") %>% 
-                  janitor::clean_names() %>% 
-                  as_tibble() %>% 
-                  select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
-                  dplyr::group_by(nome) %>%                                       #Agrupou os dados de acordo com o nome da estaão;
-                  summarise(prec_variacia = var(precipitacao_mm, na.rm = T))
+prec_varianica <-  read.csv2("Dados Metereologicos.csv") %>% 
+                   janitor::clean_names() %>% 
+                   as_tibble() %>% 
+                   select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                   dplyr::group_by(nome) %>%                                       #Agrupou os dados de acordo com o nome da estaão;
+                   summarise(prec_variancia = var(precipitacao_mm, na.rm = T))
                                       
 ##### Desvio Padrão ###############################################################################################################################################################################
 
@@ -167,6 +171,39 @@ prec_quantil <- read.csv2("Dados Metereologicos.csv") %>%
                           prec_per_50 = quantile(precipitacao_mm,probs = .50, na.rm = T),        #Percentil 50 ou Segundo Quartil
                           prec_per_75 = quantile(precipitacao_mm,probs = .75, na.rm = T))        #Percentil 75 ou Terceiro Quartil
 
+##### Coeficiente de Variação ###############################################################################################################################################################################
+
+prec_coeficinte_variacao <- read.csv2("Dados Metereologicos.csv") %>% 
+                            janitor::clean_names() %>% 
+                            as_tibble() %>% 
+                            select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                            dplyr::group_by(nome) %>%                                                                                #Agrupou os dados de acordo com o nome da estaão;
+                            summarise(prec_coef_var = sd(precipitacao_mm, na.rm = T)/ mean(precipitacao_mm, na.rm = T) * 100,
+                                      cv_categoria = cut(prec_coef_var, breaks = c(-Inf,15,30,Inf), 
+                                                                          labels = c("Baixa Dispersão","Média Dispersão","Alta Dispersão")))        
+
+# C.V. <= 15%        tem-se baixa dispersão;
+# 15% < C.V. <= 30%  tem-se média dispersão;
+# C.V > 30%          tem-se alta dispersão.
+
+##### Distribuião de Frequência ###############################################################################################################################################################################
+
+prec_distribuicao_frequencia <- read.csv2("Dados Metereologicos.csv") %>% 
+                                janitor::clean_names() %>% 
+                                as_tibble() %>% 
+                                select( -c(velocidade_vento, umidade_ar, temp_media_c)) %>% 
+                                dplyr::group_by(nome) %>% 
+                                summarise(prec_media = mean(precipitacao_mm, na.rm = T),
+                                          prec_mediana = median(precipitacao_mm, na.rm = T),
+                                          prec_variancia = var(precipitacao_mm, na.rm = T),
+                                          prec_desvio = sd(precipitacao_mm, na.rm = T),
+                                          prec_per_25 = quantile(precipitacao_mm,probs = .25, na.rm = T),
+                                          prec_per_50 = quantile(precipitacao_mm,probs = .50, na.rm = T),       
+                                          prec_per_75 = quantile(precipitacao_mm,probs = .75, na.rm = T),        
+                                          prec_coef_var = sd(precipitacao_mm, na.rm = T)/ mean(precipitacao_mm, na.rm = T) * 100,
+                                          cv_categoria = cut(prec_coef_var, breaks = c(-Inf,15,30,Inf), 
+                                                             labels = c("Baixa Dispersão","Média Dispersão","Alta Dispersão")))        
+
 ##### Rascunho ###############################################################################################################################################################################
 
 notas <- c(6,8,9.78,4,0,6,8,NA)
@@ -174,6 +211,11 @@ notas <- c(6,8,9.78,4,0,6,8,NA)
 quantile(notas,probs = .25, na.rm = T) #Percentil 25 ou Primeiro Quartil
 quantile(notas,probs = .50, na.rm = T) #Percentil 50 ou Segundo Quartil
 quantile(notas,probs = .75, na.rm = T) #Percentil 75 ou Terceiro Quartil
+
+cv <- sd(notas, na.rm = T)/ mean(notas, na.rm = T) * 100
+
+cut(dados, breaks = c(-Inf,15,30,Inf), 
+           labels = c("Baixa Dispersão","Média Dispersão","Alta Dispersão"))
 
 #Amostra
 var_amostra <- var(dados$precipitacao_mm, na.rm = T)
