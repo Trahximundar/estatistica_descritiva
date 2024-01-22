@@ -5,7 +5,9 @@ rm(list = ls())
 install.packages("patchwork")
 install.packages("summarytools")
 install.packages("credentials")
+install.packages("glue")
 
+library(glue)
 library(credentials)
 library(summarytools)
 library(patchwork)
@@ -27,10 +29,21 @@ setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/
 ##### Leitura e tratamento dos Dados ###############################################################################################################################################################################
 
 #Dados
-dados <- read.csv2("Dados Metereologicos.csv") %>% 
+        dados <- read.csv("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/estatistica_descritiva/dados_pnad_2015.csv") %>% 
          janitor::clean_names() %>%
-         as_tibble() %>% 
-         select( -c(velocidade_vento, umidade_ar, temp_media_c))
+         as_tibble() 
+
+##### Identificar as categorias #################################################################################################################################################################################        
+
+arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo)
+
+c(arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo))
+
+##### Minimo e Maximo  #################################################################################################################################################################################        
+
+sprintf('De %s até %s anos', min(dados$idade), max(dados$idade))
+
+glue('De {min(dados$idade)} até {max(dados$idade)} anos.')
 
 ##### Gráficos Individuais #################################################################################################################################################################################        
 
@@ -121,6 +134,18 @@ dados.cat <- cut(dados$precipitacao_mm, breaks = c(0,57,114,180),
 
 summarytools::freq(dados.cat,report.nas = FALSE,
                    style = "rmarkdown")
+
+#Frequencia e porcentagem por sexo
+dist_freq_qualitativas <- cbind(freq = table(dados$sexo), percent = prop.table(table(dados$sexo)) * 100)
+colnames(dist_freq_qualitativas) <- c('Frequência', 'Porcentagem (%)')
+rownames(dist_freq_qualitativas) <- c('Masculino', 'Feminino')
+dist_freq_qualitativas
+
+#Renda média por sexo e raça
+medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)
+rownames(medias) <- c('Masculino', 'Feminino')
+colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
+medias
 
 ##### Média  ###############################################################################################################################################################################
 
@@ -239,11 +264,13 @@ sd(notas,na.rm = T)
 
 sqrt(var_pop(notas))
 
+sessionInfo()
 
+unique(select(dados, precipitacao_mm))
 
+sprintf('De %s até %s mm', min(dados$precipitacao_mm), max(dados$precipitacao_mm))
 
-
-
+dados2 <- read.csv("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/estatistica_descritiva/dados_pnad_2015.csv")
 
 
 
