@@ -22,6 +22,8 @@ library(tibble)
 library(readxl)
 library(dplyr)
 
+##### Curso Mercel #################################################################################################################################################################################
+
 ##### Diretório de Trabalho #################################################################################################################################################################################
 
 setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/")
@@ -32,18 +34,6 @@ setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/
         dados <- read.csv("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/estatistica_descritiva/dados_pnad_2015.csv") %>% 
          janitor::clean_names() %>%
          as_tibble() 
-
-##### Identificar as categorias #################################################################################################################################################################################        
-
-arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo)
-
-c(arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo))
-
-##### Minimo e Maximo  #################################################################################################################################################################################        
-
-sprintf('De %s até %s anos', min(dados$idade), max(dados$idade))
-
-glue('De {min(dados$idade)} até {max(dados$idade)} anos.')
 
 ##### Gráficos Individuais #################################################################################################################################################################################        
 
@@ -228,6 +218,58 @@ prec_distribuicao_frequencia <- read.csv2("Dados Metereologicos.csv") %>%
                                           prec_coef_var = sd(precipitacao_mm, na.rm = T)/ mean(precipitacao_mm, na.rm = T) * 100,
                                           cv_categoria = cut(prec_coef_var, breaks = c(-Inf,15,30,Inf), 
                                                              labels = c("Baixa Dispersão","Média Dispersão","Alta Dispersão")))        
+
+##### Curso Alura #################################################################################################################################################################################
+##### Diretório de Trabalho #################################################################################################################################################################################
+
+setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/")
+
+##### Leitura e tratamento dos Dados ###############################################################################################################################################################################
+
+#Dados
+dados <- read.csv("estatistica_descritiva/dados_pnad_2015.csv") %>% 
+         janitor::clean_names() %>%
+         as_tibble() 
+
+##### Identificar as categorias #################################################################################################################################################################################        
+
+arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo) #Forma 1
+
+c(arrange(unique(select(dados, anos_de_estudo)),anos_de_estudo)) #Forma 2
+
+##### Minimo e Maximo  #################################################################################################################################################################################        
+
+sprintf('De %s até %s anos', min(dados$idade), max(dados$idade)) #Forma 1
+
+glue('De {min(dados$idade)} até {max(dados$idade)} anos.') #Forma 2
+
+##### Distribuião de Frequência  #################################################################################################################################################################################        
+
+table(dados$sexo)
+
+prop.table(table(dados$sexo)) * 100
+
+dist_freq_qualitativas <- cbind(freq = table(dados$sexo), percent = prop.table(table(dados$sexo)) * 100)
+
+colnames(dist_freq_qualitativas) <- c('Frequência', 'Porcentagem (%)')
+
+rownames(dist_freq_qualitativas) <- c('Masculino', 'Feminino')
+
+dist_freq_qualitativas
+
+frequencia <- table(dados$sexo, dados$cor)
+rownames(frequencia) <- c('Masculino', 'Feminino')
+colnames(frequencia) <-c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
+frequencia <- cbind(frequencia)
+frequencia
+
+percentual <- prop.table(frequencia) * 100
+percentual
+
+medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)  #Renda média por sexo e cor.
+rownames(medias) <- c('Masculino', 'Feminino')
+colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
+medias
 
 ##### Rascunho ###############################################################################################################################################################################
 
