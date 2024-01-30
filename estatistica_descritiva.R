@@ -31,9 +31,9 @@ setwd("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/
 ##### Leitura e tratamento dos Dados ###############################################################################################################################################################################
 
 #Dados
-        dados <- read.csv("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/estatistica_descritiva/dados_pnad_2015.csv") %>% 
-         janitor::clean_names() %>%
-         as_tibble() 
+ dados <- read.csv("C:/Users/Flávia Cristina/Documents/pos/estatistica/Dados Metereologicos/estatistica_descritiva/dados_pnad_2015.csv") %>% 
+          janitor::clean_names() %>%
+          as_tibble() 
 
 ##### Gráficos Individuais #################################################################################################################################################################################        
 
@@ -244,6 +244,7 @@ sprintf('De %s até %s anos', min(dados$idade), max(dados$idade)) #Forma 1
 glue('De {min(dados$idade)} até {max(dados$idade)} anos.') #Forma 2
 
 ##### Distribuião de Frequência  #################################################################################################################################################################################        
+##### Variaveis Qualitativa ##################################################################################################################################
 
 table(dados$sexo)
 
@@ -270,6 +271,32 @@ medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)  #Renda média 
 rownames(medias) <- c('Masculino', 'Feminino')
 colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
 medias
+
+##### Variaveis Quantitativas ##################################################################################################################################
+
+min(dados$renda)
+
+max(dados$renda)
+
+classes <- c(0, 1576, 3152, 7880, 15760, 200000)
+
+labels <- c('E', 'D', 'C', 'B', 'A')
+
+frequencia <-  cut(dados$renda,breaks = classes, 
+                  labels = labels, 
+                  include.lowest = TRUE) %>% 
+               table() 
+frequencia
+
+percentual <- prop.table(frequencia) * 100
+percentual
+
+dist_freq_quantitativas_personalizadas <- cbind('Frequência' = frequencia, 'Porcentagem (%)' = percentual)
+dist_freq_quantitativas_personalizadas
+
+dist_freq_quantitativas_personalizadas[
+  order(row.names(dist_freq_quantitativas_personalizadas)),
+]
 
 ##### Rascunho ###############################################################################################################################################################################
 
