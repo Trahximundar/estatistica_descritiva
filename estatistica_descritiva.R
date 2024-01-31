@@ -272,7 +272,7 @@ rownames(medias) <- c('Masculino', 'Feminino')
 colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
 medias
 
-##### Variaveis Quantitativas ##################################################################################################################################
+##### Variaveis Quantitativas - Classes personalizadas ##################################################################################################################################
 
 min(dados$renda)
 
@@ -297,6 +297,146 @@ dist_freq_quantitativas_personalizadas
 dist_freq_quantitativas_personalizadas[
   order(row.names(dist_freq_quantitativas_personalizadas)),
 ]
+
+##### Variaveis Quantitativas - Classes de amplitude fixa  ##################################################################################################################################
+
+#Regra de Sturges
+
+n <- nrow(dados)
+k <- 1 + (10 / 3) * log10(n)
+k <- round(k)
+
+labels <- c(
+  '      0.00 |—|  11,764.70', 
+  ' 11,764.70  —|  23,529.40', 
+  ' 23,529.40  —|  35,294.10', 
+  ' 35,294.10  —|  47,058.80', 
+  ' 47,058.80  —|  58,823.50', 
+  ' 58,823.50  —|  70,588.20', 
+  ' 70,588.20  —|  82,352.90', 
+  ' 82,352.90  —|  94,117.60', 
+  ' 94,117.60  —| 105,882.00', 
+  '105,882.00  —| 117,647.00', 
+  '117,647.00  —| 129,412.00', 
+  '129,412.00  —| 141,176.00', 
+  '141,176.00  —| 152,941.00', 
+  '152,941.00  —| 164,706.00', 
+  '164,706.00  —| 176,471.00', 
+  '176,471.00  —| 188,235.00', 
+  '188,235.00  —| 200,000.00'
+)
+
+frequencia <- table(
+  cut(
+    x <- dados$renda,
+    breaks <- k,
+    labels <- labels,
+    include.lowest <- TRUE
+  )
+)
+
+percentual <- prop.table(frequencia) * 100
+
+dist_freq_quantitativas_amplitude_fixa <- cbind('Frequência' = frequencia, 'Porcentagem (%)' = percentual)
+dist_freq_quantitativas_amplitude_fixa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Histograma  ##################################################################################################################################
+
+# O HISTOGRAMA é a representação gráfica de uma distribuição de frequências. 
+# É um gráfico formado por um conjunto de retângulos colocados lado a lado, 
+# onde a área de cada retângulo é proporcional à frequência da classe que ele representa.
+
+options(repr.plot.width = 7, repr.plot.height = 4)
+
+hist(dados$Altura)
+
+hist(
+  x = dados$altura,
+  breaks = 'Sturges',
+  col = 'lightblue',
+  main = 'Histograma das Alturas',
+  xlab = 'Altura',
+  ylab = 'Frequências',
+  prob = TRUE,
+  las = 1
+)
+
+ggplot(dados, aes(x = altura)) + 
+  geom_histogram(binwidth = 0.02, color = "black", alpha = 0.9) + 
+  ylab("Frequência") + 
+  xlab("Alturas") + 
+  ggtitle('Histograma das Alturas') +
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.y = element_text(size = 12, vjust = +0.2),
+    axis.title.x = element_text(size = 12, vjust = -0.2),
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10)
+  )
+
+formatos <- theme(
+  plot.title = element_text(size = 14, hjust = 0.5),
+  axis.title.y = element_text(size = 12, vjust = +0.2),
+  axis.title.x = element_text(size = 12, vjust = -0.2),
+  axis.text.y = element_text(size = 10),
+  axis.text.x = element_text(size = 10)
+)
+
+ggplot(dados, aes(x = altura, y = ..density..)) + 
+  geom_histogram(binwidth = 0.02, color = "black", alpha = 0.9) + 
+  geom_density(color = 'green', size = 1.5) +
+  ylab("Frequência") + 
+  xlab("Alturas") + 
+  ggtitle('Histograma das Alturas') +
+  formatos
+
+bar_chart <- data.frame(dist_freq_quantitativas_personalizadas)
+bar_chart
+
+ggplot(bar_chart, aes(x = row.names(bar_chart), y = bar_chart$Frequência)) + 
+  geom_bar(stat = "identity") + 
+  ylab("Frequência") + 
+  xlab("Classes de Renda") + 
+  ggtitle('Gráfico Classes de Renda') +
+  formatos
+
+##### Medidas de Tendência Central ###############################################################################################################################################################################
+##### Média Aritmética ###############################################################################################################################################################################
+
+# DataFrame de exemplo
+
+materias <- c('Matemática', 'Português', 'Inglês', 'Geografia', 'História', 'Física', 'Química')
+Fulano <- c(8, 10, 4, 8, 6, 10, 8)
+Beltrano <- c(10, 2, 0.5, 1, 3, 9.5, 10)
+Sicrano <- c(7.5, 8, 7, 8, 8, 8.5, 7)
+
+df <- data.frame(Fulano, Beltrano, Sicrano, row.names = materias)
+df
+
+
 
 ##### Rascunho ###############################################################################################################################################################################
 
