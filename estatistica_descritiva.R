@@ -2,11 +2,6 @@ rm(list = ls())
 
 ##### Biblbiotecas #################################################################################################################################################################################
 
-install.packages("patchwork")
-install.packages("summarytools")
-install.packages("credentials")
-install.packages("glue")
-
 library(glue)
 library(credentials)
 library(summarytools)
@@ -131,7 +126,7 @@ colnames(dist_freq_qualitativas) <- c('Frequência', 'Porcentagem (%)')
 rownames(dist_freq_qualitativas) <- c('Masculino', 'Feminino')
 dist_freq_qualitativas
 
-#Renda média por sexo e raça
+#renda média por sexo e raça
 medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)
 rownames(medias) <- c('Masculino', 'Feminino')
 colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
@@ -267,7 +262,7 @@ frequencia
 percentual <- prop.table(frequencia) * 100
 percentual
 
-medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)  #Renda média por sexo e cor.
+medias <- tapply(dados$renda, list(dados$sexo, dados$cor), mean)  #renda média por sexo e cor.
 rownames(medias) <- c('Masculino', 'Feminino')
 colnames(medias) <- c('Indígena', 'Branca', 'Preta', 'Amarela', 'Parda')
 medias
@@ -371,14 +366,14 @@ dist_freq_quantitativas_amplitude_fixa
 
 options(repr.plot.width = 7, repr.plot.height = 4)
 
-hist(dados$Altura)
+hist(dados$altura)
 
 hist(
   x = dados$altura,
   breaks = 'Sturges',
   col = 'lightblue',
-  main = 'Histograma das Alturas',
-  xlab = 'Altura',
+  main = 'Histograma das alturas',
+  xlab = 'altura',
   ylab = 'Frequências',
   prob = TRUE,
   las = 1
@@ -387,8 +382,8 @@ hist(
 ggplot(dados, aes(x = altura)) + 
   geom_histogram(binwidth = 0.02, color = "black", alpha = 0.9) + 
   ylab("Frequência") + 
-  xlab("Alturas") + 
-  ggtitle('Histograma das Alturas') +
+  xlab("alturas") + 
+  ggtitle('Histograma das alturas') +
   theme(
     plot.title = element_text(size = 14, hjust = 0.5),
     axis.title.y = element_text(size = 12, vjust = +0.2),
@@ -409,8 +404,8 @@ ggplot(dados, aes(x = altura, y = ..density..)) +
   geom_histogram(binwidth = 0.02, color = "black", alpha = 0.9) + 
   geom_density(color = 'green', size = 1.5) +
   ylab("Frequência") + 
-  xlab("Alturas") + 
-  ggtitle('Histograma das Alturas') +
+  xlab("alturas") + 
+  ggtitle('Histograma das alturas') +
   formatos
 
 bar_chart <- data.frame(dist_freq_quantitativas_personalizadas)
@@ -419,8 +414,8 @@ bar_chart
 ggplot(bar_chart, aes(x = row.names(bar_chart), y = bar_chart$Frequência)) + 
   geom_bar(stat = "identity") + 
   ylab("Frequência") + 
-  xlab("Classes de Renda") + 
-  ggtitle('Gráfico Classes de Renda') +
+  xlab("Classes de renda") + 
+  ggtitle('Gráfico Classes de renda') +
   formatos
 
 ##### Medidas de Tendência Central ###############################################################################################################################################################################
@@ -443,7 +438,271 @@ mean(dados$renda)
 
 aggregate(list(renda = dados$renda), list(Sexo = dados$sexo), mean)
 
+##### Mediana ###############################################################################################################################################################################
 
+# Exemplo 1 - n ímpar
+
+df_fulano <- df[order(df$Fulano),]
+df_fulano
+
+n = nrow(df_fulano)
+n
+
+elemento_md <- (n + 1) / 2
+elemento_md
+
+df_fulano[elemento_md, ]
+
+median(df$Fulano)
+
+# Exemplo 2 - n par
+
+set.seed(101)
+sample(nrow(df), 6)
+
+df_beltrano <- df[sample(nrow(df), 6), ]
+df_beltrano
+
+df_beltrano <- df_beltrano[order(df_beltrano$Beltrano), ]
+df_beltrano
+
+elemento_md = n / 2
+elemento_md
+
+mean(df_beltrano[c(elemento_md, elemento_md + 1), ]$Beltrano)
+
+median(df_beltrano$Beltrano)
+
+##### Moda ###############################################################################################################################################################################
+
+exemplo_moda <- c(1,2,2,3,4,4,5,6,7,7)
+exemplo_moda
+
+freq <- table(exemplo_moda)
+freq
+
+freq[freq == max(freq)]
+
+names(freq)[freq == max(freq)]
+
+Moda <- function(x){
+     freq <- table(x)
+     return(names(freq)[freq == max(freq)])
+  
+}
+
+Moda(exemplo_moda)
+
+Moda(df$Fulano)
+
+##### Relação entre média, mediana e moda ###############################################################################################################################################################################
+
+# Avaliando a variável renda
+
+ggplot(dados[dados$renda < 20000, ], aes(x = renda, y = ..density..)) + 
+  geom_histogram(binwidth = 500) + 
+  geom_density(color = 'green')
+
+moda <- as.numeric(Moda(dados$renda))
+moda
+
+mediana <- median(dados$renda)
+mediana
+
+media <- mean(dados$renda)
+media
+
+# Avaliando a variável altura
+
+ggplot(dados, aes(x = altura, y = ..density..)) + 
+  geom_histogram() + 
+  geom_density(color = 'green')
+
+moda <- as.numeric(Moda(dados$altura))
+moda
+
+mediana <- median(dados$altura)
+mediana
+
+media <- mean(dados$altura)
+media
+
+# Avaliando a variável ANOS DE ESTUDO
+
+ggplot(dados, aes(x = anos_de_estudo, y = ..density..)) + 
+  geom_histogram() + 
+  geom_density(color = 'green')
+
+moda <- as.numeric(Moda(dados$anos_de_estudo))
+moda
+
+mediana <- median(dados$anos_de_estudo)
+mediana
+
+media = mean(dados$anos_de_estudo)
+media
+
+##### MEDIDAS SEPARATRIZES ###############################################################################################################################################################################
+##### Quartis, decis e percentis ###############################################################################################################################################################################
+
+quantile(dados$renda, c(0.25, 0.50, 0.75))
+
+decis <- c()
+for(i in 1:9){
+  decis <- c(decis, i / 10)
+}
+decis
+
+centis <- c()
+for(i in 1:99){
+  centis <- c(centis, i / 100)
+}
+
+centis
+
+quantile(dados$renda, centis)
+
+ggplot(data = dados, aes(x = idade)) + 
+  geom_histogram (aes(y = cumsum(..count..)/sum(..count..), 
+        bins = 10) )+ 
+  geom_freqpoly(aes(y = cumsum(..count..)/sum(..count..)), 
+        color = 'green')
+    
+    decis <- c()
+    for(i in 1:9){
+      decis <- c(decis, i / 10)
+    }
+    quantile(dados$idade, decis)
+
+# Classificação percentual
+length(dados$idade[dados$idade <= 40]) / length(dados$idade) * 100
+
+##### Box-plot ###############################################################################################################################################################################
+
+length(dados$renda[dados$renda <= 788/2 ]) / length(dados$renda) * 100 
+
+sexo = c(
+  'Masculino', 
+  'Feminino'
+)
+cor = c(
+  'Indígena', 
+  'Branca', 
+  'Preta', 
+  'Amarela', 
+  'Parda'
+)
+anos_de_estudo = c(
+  'Sem instrução e menos de 1 ano', 
+  '1 ano', 
+  '2 anos', 
+  '3 anos', 
+  '4 anos', 
+  '5 anos', 
+  '6 anos', 
+  '7 anos', 
+  '8 anos', 
+  '9 anos', 
+  '10 anos', 
+  '11 anos', 
+  '12 anos', 
+  '13 anos', 
+  '14 anos', 
+  '15 anos ou mais', 
+  'Não determinados'
+)
+
+
+ggplot(data = dados, aes(x = "", y = altura)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = '#3274A1') + 
+  coord_flip() +
+  ylab("Metros") + 
+  xlab("") + 
+  ggtitle('Box-plot Alturas') +
+  formatos
+
+ggplot(data = dados, aes(x = sexo, y = altura, group = sexo)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = c('#3274A1', "orange")) + 
+  coord_flip() +
+  ylab("Metros") + 
+  xlab("Sexo") + 
+  ggtitle('Box-plot Alturas X Sexo') +
+  formatos
+
+dados$cat.sexo <- factor(dados$sexo)
+levels(dados$cat.sexo) <- sexo
+
+ggplot(data = dados, aes(x = cat.sexo, y = altura)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = c('#3274A1', "orange")) + 
+  coord_flip() +
+  ylab("Metros") + 
+  xlab("Sexo") + 
+  ggtitle('Box-plot Alturas X Sexo') +
+  formatos
+
+ggplot(data = dados[dados$renda < 10000, ], aes(x = "", y = renda)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = '#3274A1') + 
+  coord_flip() +
+  ylab("R$") + 
+  xlab("") + 
+  ggtitle('Box-plot Renda') +
+  formatos
+
+ggplot(data = dados[dados$renda < 10000, ], aes(x = cat.sexo, y = renda)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = c('#3274A1', "orange")) + 
+  coord_flip() +
+  ylab("R$") + 
+  xlab("Sexo") + 
+  ggtitle('Box-plot Renda X Sexo') +
+  formatos
+
+dados$cat_anos_de_estudo <- factor(dados$anos_de_estudo, order = TRUE)
+levels(dados$cat_anos_de_estudo) <- anos_de_estudo
+
+ggplot(data = dados, aes(x = "", y = anos_de_estudo)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = '#3274A1') + 
+  coord_flip() +
+  ylab("Anos") + 
+  xlab("") + 
+  ggtitle('Box-plot Anos de Estudo') +
+  formatos
+
+ggplot(data = dados, aes(x = cat.sexo, y = anos_de_estudo)) + 
+  stat_boxplot(geom ='errorbar', width = 0.4) + 
+  geom_boxplot(fill = c('#3274A1', "orange")) + 
+  coord_flip() +
+  ylab("Anos") + 
+  xlab("Sexo") + 
+  ggtitle('Box-plot Anos de Estudo X Sexo') +
+  formatos
+
+dados$cat_uf <- factor(dados$uf) 
+
+ggplot( 
+  data = dados[(dados$uf == 29 | dados$uf == 35) & dados$renda < 10000, ],  
+  aes(y = renda, x = cat_uf) 
+) +  
+  stat_boxplot(geom ='errorbar', width = 0.4) +  
+  geom_boxplot(fill = c('#3274A1', "orange")) +  
+  coord_flip() + 
+  ylab("R$") +  
+  xlab("UF") +  
+  ggtitle('Renda (R$) - Bahia X São Paulo') + 
+  theme( 
+    plot.title = element_text(size = 14, hjust = 0.5), 
+    axis.title.y = element_text(size = 12, vjust = +0.2), 
+    axis.title.x = element_text(size = 12, vjust = -0.2), 
+    axis.text.y = element_text(size = 10), 
+    axis.text.x = element_text(size = 10) 
+  )
+
+dados[(dados$uf == 29 | dados$uf == 35) & dados$renda < 10000, ]
 
 ##### Rascunho ###############################################################################################################################################################################
 
