@@ -16,6 +16,7 @@ library(tidyverse)
 library(tibble)
 library(readxl)
 library(dplyr)
+library(DescTools)
 
 ##### Curso Mercel #################################################################################################################################################################################
 
@@ -334,29 +335,6 @@ percentual <- prop.table(frequencia) * 100
 
 dist_freq_quantitativas_amplitude_fixa <- cbind('Frequência' = frequencia, 'Porcentagem (%)' = percentual)
 dist_freq_quantitativas_amplitude_fixa
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ##### Histograma  ##################################################################################################################################
 
@@ -703,6 +681,61 @@ ggplot(
   )
 
 dados[(dados$uf == 29 | dados$uf == 35) & dados$renda < 10000, ]
+
+##### Medidas de Dispersão ###############################################################################################################################################################################
+##### Desvio médio absoluto ###############################################################################################################################################################################
+
+summary(df)
+
+notas_fulano <- data.frame(Fulano = df$Fulano, row.names = row.names(df))
+notas_fulano
+
+nota_media_fulano <- mean(notas_fulano$Fulano)
+nota_media_fulano
+
+notas_fulano$Desvio <- notas_fulano$Fulano - nota_media_fulano
+notas_fulano
+
+notas_fulano$Desvio.Absoluto <- abs(notas_fulano$Desvio)
+notas_fulano
+
+ggplot(data = notas_fulano, aes(x = row.names(notas_fulano), y = Fulano)) + 
+  geom_point() + 
+  geom_hline(yintercept = mean(notas_fulano$Fulano), color = 'red') + 
+  geom_segment(aes(x = 1, y = 10, xend = 1, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 2, y = 8, xend = 2, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 3, y = 6, xend = 3, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 4, y = 4, xend = 4, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 5, y = 8, xend = 5, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 6, y = 10, xend = 6, yend = mean(notas_fulano$Fulano))) + 
+  geom_segment(aes(x = 7, y = 8, xend = 7, yend = mean(notas_fulano$Fulano)))
+
+mean(notas_fulano$Desvio.Absoluto)
+
+MeanAD(df$Fulano)
+
+##### Variância ###############################################################################################################################################################################
+
+notas_fulano$Desvio2 <- notas_fulano$Desvio ^ 2
+notas_fulano
+
+sum(notas_fulano$Desvio2) / (nrow(notas_fulano) - 1)
+
+variancia <- var(notas_fulano$Fulano)
+variancia
+
+##### Desvio padrão ###############################################################################################################################################################################
+
+sqrt(variancia)
+
+desvio_padrao <- sd(notas_fulano$Fulano)
+desvio_padrao
+
+Moda(df$Fulano)
+Moda(df$Sicrano)
+
+sd(df$Fulano)
+sd(df$Sicrano)
 
 ##### Rascunho ###############################################################################################################################################################################
 
